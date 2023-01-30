@@ -21,7 +21,11 @@ eksctl create cluster -n ${K8S_CLUSTER_NAME} \
 helm repo add falcosecurity https://falcosecurity.github.io/charts
 helm repo update
 
-helm install falco falcosecurity/falco --namespace falco --create-namespace --set falcosidekick.enabled=true --set falcosidekick.webui.enabled=true
+helm install falco falcosecurity/falco --namespace falco \
+  --create-namespace \
+  --set falcosidekick.enabled=true \
+  --set falcosidekick.webui.enabled=true
+  
 kubectl get pods -n falco -o wide -w
 ```
 
