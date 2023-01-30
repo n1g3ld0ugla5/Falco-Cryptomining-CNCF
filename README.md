@@ -116,3 +116,138 @@ Apply the changes
 ```
 kubectl apply -f miner-deployment.yaml
 ```
+
+
+## Introduce the custom rules
+
+We are going to create a file that contains custom rules so that we can keep it in a Git repository.
+```
+vi custom-rules.yaml
+```
+
+Add the following content
+```
+customRules:
+  rules-mining.yaml: |-
+
+    # Threat Feed Objects
+
+    - list: miner_ports
+      items: [
+         25, 3333, 3334, 3335, 3336, 3357, 4444,
+         5555, 5556, 5588, 5730, 6099, 6666, 7777,
+         7778, 8000, 8001, 8008, 8080, 8118, 8333,
+         8888, 8899, 9332, 9999, 14433, 14444,
+         45560, 45700
+      ]
+
+     - list: miner_domains
+       items: [
+         "asia1.ethpool.org","ca.minexmr.com",
+         "cn.stratum.slushpool.com","de.minexmr.com",
+         "eth-ar.dwarfpool.com","eth-asia.dwarfpool.com",
+         "eth-asia1.nanopool.org","eth-au.dwarfpool.com",
+         "eth-au1.nanopool.org","eth-br.dwarfpool.com",
+         "eth-cn.dwarfpool.com","eth-cn2.dwarfpool.com",
+         "eth-eu.dwarfpool.com","eth-eu1.nanopool.org",
+         "eth-eu2.nanopool.org","eth-hk.dwarfpool.com",
+         "eth-jp1.nanopool.org","eth-ru.dwarfpool.com",
+         "eth-ru2.dwarfpool.com","eth-sg.dwarfpool.com",
+         "eth-us-east1.nanopool.org","eth-us-west1.nanopool.org",
+         "eth-us.dwarfpool.com","eth-us2.dwarfpool.com",
+         "eu.stratum.slushpool.com","eu1.ethermine.org",
+         "eu1.ethpool.org","fr.minexmr.com",
+         "mine.moneropool.com","mine.xmrpool.net",
+         "pool.minexmr.com","pool.monero.hashvault.pro",
+         "pool.supportxmr.com","sg.minexmr.com",
+         "sg.stratum.slushpool.com","stratum-eth.antpool.com",
+         "stratum-ltc.antpool.com","stratum-zec.antpool.com",
+         "stratum.antpool.com","us-east.stratum.slushpool.com",
+         "us1.ethermine.org","us1.ethpool.org",
+         "us2.ethermine.org","us2.ethpool.org",
+         "xmr-asia1.nanopool.org","xmr-au1.nanopool.org",
+         "xmr-eu1.nanopool.org","xmr-eu2.nanopool.org",
+         "xmr-jp1.nanopool.org","xmr-us-east1.nanopool.org",
+         "xmr-us-west1.nanopool.org","xmr.crypto-pool.fr",
+         "xmr.pool.minergate.com", "rx.unmineable.com",
+         "ss.antpool.com","dash.antpool.com",
+         "eth.antpool.com","zec.antpool.com",
+         "xmc.antpool.com","btm.antpool.com",
+         "stratum-dash.antpool.com","stratum-xmc.antpool.com",
+         "stratum-btm.antpool.com"
+      ]
+
+     - list: https_miner_domains
+       items: [
+        "ca.minexmr.com",
+        "cn.stratum.slushpool.com",
+        "de.minexmr.com",
+        "fr.minexmr.com",
+        "mine.moneropool.com",
+        "mine.xmrpool.net",
+        "pool.minexmr.com",
+        "sg.minexmr.com",
+        "stratum-eth.antpool.com",
+        "stratum-ltc.antpool.com",
+        "stratum-zec.antpool.com",
+        "stratum.antpool.com",
+        "xmr.crypto-pool.fr",
+        "ss.antpool.com",
+        "stratum-dash.antpool.com",
+        "stratum-xmc.antpool.com",
+        "stratum-btm.antpool.com",
+        "btm.antpool.com"
+      ]
+
+     - list: http_miner_domains
+       items: [
+        "ca.minexmr.com",
+        "de.minexmr.com",
+        "fr.minexmr.com",
+        "mine.moneropool.com",
+        "mine.xmrpool.net",
+        "pool.minexmr.com",
+        "sg.minexmr.com",
+        "xmr.crypto-pool.fr"
+      ]
+
+    # Add rule based on crypto mining IOCs
+    
+    - macro: minerpool_https
+      condition: (fd.sport="443" and fd.sip.name in (https_miner_domains))
+
+    - macro: minerpool_http
+      condition: (fd.sport="80" and fd.sip.name in (http_miner_domains))
+
+    - macro: minerpool_other
+      condition: (fd.sport in (miner_ports) and fd.sip.name in (miner_domains))
+
+    - macro: net_miner_pool
+      condition: (evt.type in (sendto, sendmsg, connect) and evt.dir=< 
+        and (fd.net != "127.0.0.0/8" and not fd.snet in (rfc_1918_addresses)) 
+        and ((minerpool_http) or (minerpool_https) or (minerpool_other)))
+
+    - macro: trusted_images_query_miner_domain_dns
+      condition: (container.image.repository in (falco_containers))
+
+    # The rule is disabled by default. It's enabled in this case
+    # Note: falco will send DNS request to resolve miner pool domain which may trigger alerts in your environment.
+    - rule: Detect outbound connections to common miner pool ports
+      desc: Miners typically connect to miner pools on common ports.
+      condition: net_miner_pool and not trusted_images_query_miner_domain_dns
+      enabled: true
+      output: Outbound connection to IP/Port flagged by https://cryptoioc.ch 
+      (command=%proc.cmdline pid=%proc.pid port=%fd.rport ip=%fd.rip container=%container.info image=%container.image.repository)
+      priority: CRITICAL
+      tags: [host, container, network, mitre_execution, T1496]
+```
+
+So next step is to use the custom-rules.yaml file for installing the Falco Helm chart.
+```
+helm install falco -f custom-rules.yaml falcosecurity/falco
+```
+
+And we will see in our logs something like:
+```
+Tue Jun  5 15:08:57 2018: Loading rules from file /etc/falco/rules.d/rules-traefik.yaml:
+```
