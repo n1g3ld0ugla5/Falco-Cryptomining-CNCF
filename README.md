@@ -41,3 +41,73 @@ Mon Jan 30 10:56:27 2023: Opening capture with Kernel module <br/>
 
 ## Install the Cryptominer
 
+Create a namespace for the miner
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: miner-test
+spec: {}
+status: {}
+```
+
+Apply the changes
+```
+kubectl apply -f miner-namespace.yaml
+```
+
+Create a deployment for the miner
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: miner
+  name: miner
+  namespace: miner-test
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: miner
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: miner
+    spec:
+      containers:
+      - env:
+        - name: POOL_URL
+          value: pool.minexmr.com
+        image: metal3d/xmrig:latest
+        imagePullPolicy: Always
+        name: xmrig
+        resources:
+          limits:
+            cpu: 0.5
+            memory: 4Gi
+          requests:
+            cpu: 0.25
+            memory: 2Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+```     
+ 
+Apply the changes
+```
+kubectl apply -f miner-deployment.yaml
+```
