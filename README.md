@@ -259,5 +259,5 @@ helm install falco -f custom-rules.yaml falcosecurity/falco
 
 And we will see in our logs something like:
 ```
-Tue Jun  5 15:08:57 2018: Loading rules from file /etc/falco/rules.d/rules-traefik.yaml:
+Mon Jan 30 10:56:26 2023: Loading rules from file /etc/falco/rules.d/rules-mining.yaml:
 ```
