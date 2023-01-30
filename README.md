@@ -24,7 +24,8 @@ helm repo update
 helm install falco falcosecurity/falco --namespace falco \
   --create-namespace \
   --set falcosidekick.enabled=true \
-  --set falcosidekick.webui.enabled=true
+  --set falcosidekick.webui.enabled=true \
+  --set auditLog.enabled=true
   
 kubectl get pods -n falco -o wide -w
 ```
