@@ -125,6 +125,11 @@ We are going to create a file that contains custom rules so that we can keep it 
 vi custom-rules.yaml
 ```
 
+Remember to run the below command in ```vim``` before pasting the contents:
+```
+:set paste
+```
+
 Add the following content
 ```
 customRules:
@@ -240,6 +245,11 @@ customRules:
       (command=%proc.cmdline pid=%proc.pid port=%fd.rport ip=%fd.rip container=%container.info image=%container.image.repository)
       priority: CRITICAL
       tags: [host, container, network, mitre_execution, T1496]
+```
+
+Confirm all changes were formatted correctly:
+```
+cat custom-rules.yaml
 ```
 
 So next step is to use the custom-rules.yaml file for installing the Falco Helm chart.
