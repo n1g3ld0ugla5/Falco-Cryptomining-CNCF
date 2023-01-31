@@ -111,7 +111,7 @@ spec:
  
 Apply the changes
 ```
-kubectl apply -f miner-deployment.yaml
+kubectl apply -f deploy-miner.yaml -n miner-test
 ```
 
 
