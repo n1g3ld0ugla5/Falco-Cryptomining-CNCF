@@ -44,6 +44,14 @@ Mon Jan 30 10:56:27 2023: Starting health webserver with threadiness 4, listenin
 Mon Jan 30 10:56:27 2023: Enabled event sources: syscall <br/>
 Mon Jan 30 10:56:27 2023: Opening capture with Kernel module <br/>
 
+Check that Falco sidekick is working as expected
+```
+kubectl logs -n falco         falco-falcosidekick-ui-5b56bbd7cb-mtjkh
+```
+
+2023/01/31 15:25:00 [INFO] : Falcosidekick UI is listening on 0.0.0.0:2802
+2023/01/31 15:25:00 [INFO] : log level is info
+
 ## Install the Cryptominer
 
 Create a namespace for the miner
