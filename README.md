@@ -59,7 +59,7 @@ Create a namespace for the miner
 kubectl create namespace miner-test
 ```
 
-Create a deployment for the miner
+Create a deployment called ``` deploy-miner.yaml``` with the below context to create the miner
 ```
 apiVersion: apps/v1
 kind: Deployment
