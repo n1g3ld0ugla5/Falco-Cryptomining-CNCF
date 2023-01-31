@@ -133,3 +133,9 @@ Mon Jan 30 10:56:26 2023: Loading rules from file /etc/falco/rules.d/rules-minin
 curl https://raw.githubusercontent.com/xxradar/install_k8s_ubuntu/main/setup.sh | bash          #K8SVERSION=1.25.5-00
 curl https://raw.githubusercontent.com/xxradar/install_k8s_ubuntu/main/setup_latest.sh | bash
 ```
+
+### Install Calico or Cilium as the Network Plugin
+```
+curl https://raw.githubusercontent.com/xxradar/install_k8s_ubuntu/main/calico_install.sh | bash
+curl https://raw.githubusercontent.com/xxradar/install_k8s_ubuntu/main/cilium_install.sh | bash
+```
