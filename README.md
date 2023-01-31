@@ -153,3 +153,8 @@ sudo apt-get install helm
 ```
 helm install falco falcosecurity/falco --namespace falco   --create-namespace
 ```
+
+## Untaint the control plane
+```
+kubectl taint node ip-10-0-2-104 node-role.kubernetes.io/control-plane:NoSchedule-
+```
