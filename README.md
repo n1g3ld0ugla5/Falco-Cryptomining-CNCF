@@ -56,18 +56,7 @@ kubectl logs -n falco         falco-falcosidekick-ui-5b56bbd7cb-mtjkh
 
 Create a namespace for the miner
 ```
-apiVersion: v1
-kind: Namespace
-metadata:
-  creationTimestamp: null
-  name: miner-test
-spec: {}
-status: {}
-```
-
-Apply the changes
-```
-kubectl apply -f miner-namespace.yaml
+kubectl create namespace miner-test
 ```
 
 Create a deployment for the miner
