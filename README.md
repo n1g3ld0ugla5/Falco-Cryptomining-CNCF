@@ -126,3 +126,10 @@ And we will see in our logs something like:
 ```
 Mon Jan 30 10:56:26 2023: Loading rules from file /etc/falco/rules.d/rules-mining.yaml:
 ```
+
+
+### Install on an EC2 instance
+```
+curl https://raw.githubusercontent.com/xxradar/install_k8s_ubuntu/main/setup.sh | bash          #K8SVERSION=1.25.5-00
+curl https://raw.githubusercontent.com/xxradar/install_k8s_ubuntu/main/setup_latest.sh | bash
+```
