@@ -158,3 +158,50 @@ helm install falco falcosecurity/falco --namespace falco   --create-namespace
 ```
 kubectl taint node ip-10-0-2-104 node-role.kubernetes.io/control-plane:NoSchedule-
 ```
+
+## Moving the kubeconfig locally for port forwarding Falco Sidekick
+```
+export KUBECONFIG=./config.yaml
+kubectl config get-contexts
+```
+
+Access the files locally
+```
+kubectl get pods -A --insecure-skip-tls-verify
+```
+
+Remember to install the Falco Sidekick UI
+```
+helm upgrade falcosidekick falcosecurity/falcosidekick --set webui.enabled=true --kube-insecure-skip-tls-verify
+```
+
+WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: ./config.yaml
+WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: ./config.yaml <br/>
+Release "falcosidekick" has been upgraded. Happy Helming! <br/>
+NAME: falcosidekick <br/>
+LAST DEPLOYED: Wed Feb  1 14:58:52 2023 <br/>
+NAMESPACE: default <br/>
+STATUS: deployed <br/>
+REVISION: 2
+
+## In case sidekick redis fails to install due to missing pvc
+0/1 nodes are available: pod has unbound immediate PersistentVolumeClaims. <br/>
+preemption: 0/1 nodes are available: 1 No preemption victims found for incoming pod..
+
+```
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml --insecure-skip-tls-verify
+```
+
+namespace/local-path-storage created <br/>
+serviceaccount/local-path-provisioner-service-account created <br/>
+clusterrole.rbac.authorization.k8s.io/local-path-provisioner-role created <br/>
+clusterrolebinding.rbac.authorization.k8s.io/local-path-provisioner-bind created <br/>
+deployment.apps/local-path-provisioner created <br/>
+storageclass.storage.k8s.io/local-path created <br/>
+configmap/local-path-config created
+
+```
+kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}' --insecure-skip-tls-verify
+```
+
+
