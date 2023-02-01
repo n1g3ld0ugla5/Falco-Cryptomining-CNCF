@@ -160,9 +160,26 @@ kubectl taint node ip-10-0-2-104 node-role.kubernetes.io/control-plane:NoSchedul
 ```
 
 ## Moving the kubeconfig locally for port forwarding Falco Sidekick
+
+Sanity checks
 ```
+cd $HOME/.kube/
+ls
+kubectl config view
+cat config
+exit
+kubeadm kubeconfig
+cd $HOME/.kube/
+echo $KUBECONFIG
+exit
+```
+
+Use the exported kubeconfig file locally
+Using the public IP of the EC2 instance.
+```
+vi config.yaml
 export KUBECONFIG=./config.yaml
-kubectl config get-contexts
+kubectl config get-contexts 
 ```
 
 Access the files locally
@@ -203,5 +220,31 @@ configmap/local-path-config created
 ```
 kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}' --insecure-skip-tls-verify
 ```
+storageclass.storage.k8s.io/local-path patched
+
+```
+kubectl get storageclass --insecure-skip-tls-verify
+```
+
+NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  119s
+standard               kubernetes.io/aws-ebs   Retain          Immediate              true                   21h
+
+## Finally, Port-Foward the Falco Sidekick from Macbook
+```
+kubectl port-forward svc/falcosidekick-ui 2802 --insecure-skip-tls-verify
+```
+
+Forwarding from 127.0.0.1:2802 -> 2802
+Forwarding from [::1]:2802 -> 2802
+Handling connection for 2802
+Handling connection for 2802
+Handling connection for 2802
+Handling connection for 2802
+Handling connection for 2802
+Handling connection for 2802
+
+
+<img width="1160" alt="Screenshot 2023-02-01 at 15 39 35" src="https://user-images.githubusercontent.com/109959738/216095806-928191c1-d85d-43a8-95d8-186669abe0d2.png">
 
 
