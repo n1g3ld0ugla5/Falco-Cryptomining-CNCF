@@ -247,4 +247,9 @@ Handling connection for 2802
 
 <img width="1160" alt="Screenshot 2023-02-01 at 15 39 35" src="https://user-images.githubusercontent.com/109959738/216095806-928191c1-d85d-43a8-95d8-186669abe0d2.png">
 
-
+```
+kubectl create namespace miner-test --insecure-skip-tls-verify
+```
+```
+kubectl apply -f miner.yaml -n miner-test --insecure-skip-tls-verify
+```
