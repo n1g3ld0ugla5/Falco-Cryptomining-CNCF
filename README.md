@@ -320,3 +320,4 @@ kubectl logs -n falco -l app.kubernetes.io/name=falco \
   | grep "Warning Grep private keys"
 ```
 
+Defaulted container "falco" out of: falco, falco-driver-loader (init)
