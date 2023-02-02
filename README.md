@@ -292,3 +292,31 @@ Then, check which source of events is configured.
 kubectl logs -n falco -l app.kubernetes.io/name=falco -c falco-driver-loader --tail=-1 \
   | grep "* Running falco-driver-loader with"
 ```
+
+```* Running falco-driver-loader with:``` driver=module, compile=yes, download=yes <br/>
+The driver=module confirms that the Kernel Module is being used as the source for syscall events. <br/>
+The command returns one log for each pod.
+
+```
+kubectl logs -n falco -l app.kubernetes.io/name=falco -c falco-driver-loader --tail=-1 \
+  | grep "* Success"
+```
+
+```* Success:``` falco module found and inserted <br/>
+<br/>
+
+To do so, let's simulate someone trying to sniff for SSH keys. <br/>
+Run find on the root home dir, querying for ```"id_rsa"```:
+
+```
+find /root -name "id_rsa"
+```
+
+This action triggers the rule ```Search Private Keys or Passwords```. <br/> 
+Print to stdout the logs with:
+
+```
+kubectl logs -n falco -l app.kubernetes.io/name=falco \
+  | grep "Warning Grep private keys"
+```
+
