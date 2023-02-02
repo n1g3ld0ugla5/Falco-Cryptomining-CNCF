@@ -290,5 +290,5 @@ Wait for the Falco pods to be in running state. <br/>
 Then, check which source of events is configured.
 ```
 kubectl logs -n falco -l app.kubernetes.io/name=falco -c falco-driver-loader --tail=-1 \
->   | grep "* Running falco-driver-loader with"
+  | grep "* Running falco-driver-loader with"
 ```
