@@ -253,3 +253,42 @@ kubectl create namespace miner-test --insecure-skip-tls-verify
 ```
 kubectl apply -f miner.yaml -n miner-test --insecure-skip-tls-verify
 ```
+
+## Testing Falco Rules
+
+Run the following command to trigger one of the Falco rules:
+```
+sudo find /root -name "id_rsa"
+```
+
+However, it did not trigger the event:
+```
+grep falco /var/log/syslog | grep "find /root -name id_rsa"
+```
+
+Removing the specific event grep, I get a lot of output data: <br/>
+It's all regarding some misconfigurations I made on Sidekick earlier:
+```
+grep falco /var/log/syslog
+```
+
+Feb  2 11:22:35 ip-10-0-2-104 containerd[504]: 2023-02-02 11:22:35.741 [WARNING][5655] <br/>
+ipam_plugin.go 433: Asked to release address but it doesn't exist. <br/>
+Ignoring ContainerID="0f49213dc2015af9c6eda56cd5f5e3d421673b0b986549bed0dac58e87f482b6" <br/>
+HandleID="k8s-pod-network.0f49213dc2015af9c6eda56cd5f5e3d421673b0b986549bed0dac58e87f482b6" <br/>
+Workload="ip--10--0--2--104-k8s-falcosidekick--ui--5c566c599b--xl446-eth0" <br/>
+<br/>
+Feb  2 11:22:35 ip-10-0-2-104 containerd[504]: 2023-02-02 11:22:35.741 [INFO][5655] <br/>
+ipam_plugin.go 444: Releasing address using workloadID <br/>
+ContainerID="0f49213dc2015af9c6eda56cd5f5e3d421673b0b986549bed0dac58e87f482b6" <br/>
+HandleID="k8s-pod-network.0f49213dc2015af9c6eda56cd5f5e3d421673b0b986549bed0dac58e87f482b6" <br/>
+Workload="ip--10--0--2--104-k8s-falcosidekick--ui--5c566c599b--xl446-eth0"
+
+## Investigating Further
+
+Wait for the Falco pods to be in running state. <br/>
+Then, check which source of events is configured.
+```
+kubectl logs -n falco -l app.kubernetes.io/name=falco -c falco-driver-loader --tail=-1 \
+>   | grep "* Running falco-driver-loader with"
+```
