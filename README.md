@@ -89,7 +89,7 @@ spec:
       containers:
       - env:
         - name: POOL_URL
-          value: pool.minexmr.com
+          value: pool.supportxmr.com
         image: metal3d/xmrig:latest
         imagePullPolicy: Always
         name: xmrig
