@@ -86,6 +86,22 @@ Removes the tarbal for the next demo:
 rm -r xmrig-6.16.4-linux-static-x64.tar.gz
 ```
 
+Make sure the ```xmrig``` process is no longer running
+```
+top
+```
+
+If so, find the ```Process ID```of the xmrig service:
+```
+pidof xmrig
+```
+
+You can now either kill the process by ```Process Name``` or ```Process ID```
+```
+killall -9 xmrig
+```
+
+
 ## Cryptojacking in a running container
 
 Download a pod definition file:
