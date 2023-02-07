@@ -270,6 +270,47 @@ kubectl apply -f deploy-miner.yaml -n miner-test
 
 ## Introduce the custom rules
 
+Find the ConfigMap associated with the ```Falco``` namespace:
+```
+kubectl get configmaps -n falco
+```
+
+```
+kubectl edit configmap falco -n falco
+```
+
+Added a custom rule to the normal rules feed by modifying the ```ConfigMap```
+```
+- rule: Miner Binary Detected
+  desc: >-
+    Malicious script or binary detected in pod or host. The rule was triggered
+    by the execve syscall
+  condition: >
+    spawned_process and (in_malicious_binaries or (proc.name in (shell_binaries)
+    and scripts_in_or and not proc.args startswith "-c"))
+  output: >-
+    Malicious binary or script executed in the pod or host.
+    proc.cmdline=%proc.cmdline evt.type=%evt.type evt.res=%evt.res
+    proc.pid=%proc.pid proc.cwd=%proc.cwd proc.ppid=%proc.ppid
+    proc.pcmdline=%proc.pcmdline proc.sid=%proc.sid proc.exepath=%proc.exepath
+    user.uid=%user.uid user.loginuid=%user.loginuid
+    user.loginname=%user.loginname user.name=%user.name group.gid=%group.gid
+    group.name=%group.name container.id=%container.id
+    container.name=%container.name %evt.args
+  priority: warning
+  tags:
+  - ioc
+  source: syscall
+  append: false
+  exceptions: []
+
+- macro: in_malicious_binaries
+  condition: (proc.name in (malicious_binaries))
+
+- list: malicious_binaries
+  items: ["xmrig", ".x1mr", "nanominer", "pwnrig", "astrominer", "hellminer", "xmrigDaemon", "dero-stratum-miner", "eazyminer", "pool-miner-linux64"]
+```
+
 So next step is to use the custom-rules.yaml file for installing the Falco Helm chart.
 ```
 helm install falco -f custom-rules.yaml falcosecurity/falco
