@@ -281,37 +281,34 @@ kubectl edit configmap falco -n falco
 
 Added a custom rule to the normal rules feed by modifying the ```ConfigMap```
 ```
-    - rule: Miner Binary Detected
-      desc: >-
-        Malicious script or binary detected in pod or host. The rule was triggered
-        by the execve syscall
-      condition: >
-        spawned_process and (in_malicious_binaries or (proc.name in (shell_binaries)
-        and scripts_in_or and not proc.args startswith "-c"))
-      output: >-
-        Malicious binary or script executed in the pod or host.
-        proc.cmdline=%proc.cmdline evt.type=%evt.type evt.res=%evt.res
-        proc.pid=%proc.pid proc.cwd=%proc.cwd proc.ppid=%proc.ppid
-        proc.pcmdline=%proc.pcmdline proc.sid=%proc.sid proc.exepath=%proc.exepath
-        user.uid=%user.uid user.loginuid=%user.loginuid
-        user.loginname=%user.loginname user.name=%user.name group.gid=%group.gid
-        group.name=%group.name container.id=%container.id
-        container.name=%container.name %evt.args
-      priority: warning
-      tags:
-      - cryptomining
-      source: syscall
-      append: false
-      exceptions: []
+- rule: Miner Binary Detected
+  desc: >-
+    Malicious script or binary detected in pod or host. The rule was triggered by the execve syscall
+  condition: >
+    spawned_process and (in_malicious_binaries or (proc.name in (shell_binaries)
+    and scripts_in_or and not proc.args startswith "-c"))
+  output: >-
+    Malicious binary or script executed in the pod or host.
+    proc.cmdline=%proc.cmdline evt.type=%evt.type evt.res=%evt.res
+    proc.pid=%proc.pid proc.cwd=%proc.cwd proc.ppid=%proc.ppid
+    proc.pcmdline=%proc.pcmdline proc.sid=%proc.sid proc.exepath=%proc.exepath
+    user.uid=%user.uid user.loginuid=%user.loginuid
+    user.loginname=%user.loginname user.name=%user.name group.gid=%group.gid
+    group.name=%group.name container.id=%container.id
+    container.name=%container.name %evt.args
+    priority: warning
+    tags:
+    - cryptomining
+  source: syscall
 
-   - macro: in_malicious_binaries
-     condition: (proc.name in (malicious_binaries))
+- macro: in_malicious_binaries
+  condition: (proc.name in (malicious_binaries))
 
-   - list: malicious_binaries
-     items: ["xmrig", ".x1mr", "nanominer", "pwnrig", "astrominer",  "eazyminer", "pool-miner-linux64"]
+- list: malicious_binaries
+  items: ["xmrig", ".x1mr", "nanominer", "pwnrig", "astrominer",  "eazyminer", "pool-miner-linux64"]
 
-   - macro: scripts_in_or
-     condition: (proc.args endswith "/wb.sh" or proc.args endswith "/ldr.sh" or proc.args endswith "aktualisieren.sh" or proc.args endswith "creds.sh" or proc.args endswith "cronb.sh" or proc.args endswith "abah1.sh" or proc.args endswith "/huh.sh" or proc.args endswith "ohshit.sh" or proc.args endswith "/mxr.sh")
+- macro: scripts_in_or
+  condition: (proc.args endswith "/wb.sh" or proc.args endswith "/ldr.sh" or proc.args endswith "aktualisieren.sh" or proc.args endswith "creds.sh" or proc.args endswith "cronb.sh" or proc.args endswith "abah1.sh" or proc.args endswith "/huh.sh" or proc.args endswith "ohshit.sh" or proc.args endswith "/mxr.sh")
 ```
 
 So next step is to use the custom-rules.yaml file for installing the Falco Helm chart.
