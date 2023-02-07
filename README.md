@@ -205,6 +205,67 @@ Destroy the pod:
 kubectl delete -f privileged-pod.yaml
 ```
 
+## Launch a suspicious network tool in a container
+
+```
+kubectl apply -f priviliged-pod.yaml -n falco
+```
+
+```
+kubectl get pod -n falco -w
+```
+
+```
+kubectl exec -it test-pod-1 -n falco -- bash
+```
+
+Installing a suspicious networking tool like telnet
+```
+yum install telnet telnet-server -y
+```
+
+If this fails, just apply a few modifications to the registry management:
+```
+cd /etc/yum.repos.d/
+```
+
+```
+sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+```
+
+```
+sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+```
+
+Update the ```yum``` registry manager:
+```
+yum update -y
+```
+
+Now, try to install ```telnet``` and ```telnet server``` from the registry manager:
+```
+yum install telnet telnet-server -y
+```
+
+Just to generate the detection, run telnet:
+```
+telnet
+```
+
+#### Explain the logic 
+check out the ```ConfigMap``` configuration for ```network_tool_binaries```:
+```
+kubectl edit configmap falco falco
+```
+```
+/network_tool_binaries
+```
+
+Then delete the pod again
+```
+kubectl delete -f priviliged-pod.yaml -n falco
+```
+
 ## Installing a cryptominer in a Kubernetes Deployment
 
 Create a namespace for the miner
