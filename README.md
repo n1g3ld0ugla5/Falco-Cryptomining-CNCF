@@ -284,8 +284,8 @@ Install XMRig via the packet manager:
 Basic build is good for local machine, because it is easy, but if you need to run the miner on other machines please take a look at advanced build.
 
 ```
-sudo yum install -y epel-release
-sudo yum install -y git make cmake gcc gcc-c++ libstdc++-static libuv-static hwloc-devel openssl-devel
+yum install -y epel-release
+yum install -y git make cmake gcc gcc-c++ libstdc++-static libuv-static hwloc-devel openssl-devel
 git clone https://github.com/xmrig/xmrig.git
 mkdir xmrig/build && cd xmrig/build
 cmake ..
