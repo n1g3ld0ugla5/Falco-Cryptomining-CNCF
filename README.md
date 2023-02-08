@@ -208,11 +208,11 @@ kubectl delete -f privileged-pod.yaml
 ## Launch a suspicious network tool in a container
 
 ```
-kubectl apply -f priviliged-pod.yaml -n falco
+kubectl apply -f priviliged-pod.yaml
 ```
 
 ```
-kubectl get pod -n falco -w
+kubectl get pod -w
 ```
 
 ```
@@ -263,7 +263,7 @@ kubectl edit configmap falco falco
 
 Then delete the pod again
 ```
-kubectl delete -f priviliged-pod.yaml -n falco
+kubectl delete -f priviliged-pod.yaml
 ```
 
 ## Installing a cryptominer in a Kubernetes Deployment
