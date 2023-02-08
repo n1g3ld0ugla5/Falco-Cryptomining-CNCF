@@ -54,6 +54,7 @@ kubectl logs -n falco         falco-falcosidekick-ui-5b56bbd7cb-mtjkh
 2023/01/31 15:25:00 [INFO] : log level is info
 
 ## Running XMRig via Docker
+Use the ```--rm``` option of docker run to automatically delete the container when it exits.
 ```
 sudo docker run --rm -it metal3d/xmrig:latest
 ```
