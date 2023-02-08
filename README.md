@@ -53,8 +53,12 @@ kubectl logs -n falco         falco-falcosidekick-ui-5b56bbd7cb-mtjkh
 2023/01/31 15:25:00 [INFO] : Falcosidekick UI is listening on 0.0.0.0:2802
 2023/01/31 15:25:00 [INFO] : log level is info
 
-## Cryptomining on the host
+## Running XMRig via Docker
+```
+sudo docker run --rm -it metal3d/xmrig:latest
+```
 
+## Cryptomining on the host
 
 Download 'untar' to install and run the cryptominer:
 
