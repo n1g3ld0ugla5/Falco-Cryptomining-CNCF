@@ -177,16 +177,34 @@ kubectl exec -it test-pod-1 -- bash
 curl -OL https://github.com/xmrig/xmrig/releases/download/v6.16.4/xmrig-6.16.4-linux-static-x64.tar.gz
 ```
 
+Unzip the tarbal file:
 ```
 tar -xvf xmrig-6.16.4-linux-static-x64.tar.gz
 ```
 
+Move to the directory holding the miner:
 ```
 cd xmrig-6.16.4
 ```
 
+For the purpose of testing, run chmod to trigger the ```SetGid Bit``` detection:
+```
+chmod u+s xmrig
+```
+
+Should trigger the detection, but there's likely no actual change here:
+```
+sudo find / -perm /6000 -type f
+```
+
+Run the cryptominer in background mode (this won't show anything in your shell)
 ```
 ./xmrig --donate-level 8 -o xmr-us-east1.nanopool.org:14433 -u 422skia35WvF9mVq9Z9oCMRtoEunYQ5kHPvRqpH1rGCv1BzD5dUY4cD8wiCMp4KQEYLAN1BuawbUEJE99SNrTv9N9gf2TWC --tls --coin monero --background
+```
+
+If you'd like to see XMRig in action, run the shell file without any flags
+```
+./xmrig
 ```
 
 Make sure the ```xmrig``` process is running
