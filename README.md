@@ -351,6 +351,15 @@ Apply the changes
 kubectl apply -f deploy-miner.yaml -n miner-test
 ```
 
+Check the pod is running correctly:
+```
+kubectl logs pod <pod-name> -n miner-test
+```
+
+Delete the pod after the test is performed:
+```
+kubectl delete -f deploy-miner.yaml -n miner-test
+```
 
 ## Introduce the custom rules
 
