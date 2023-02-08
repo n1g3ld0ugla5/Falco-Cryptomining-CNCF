@@ -234,7 +234,7 @@ kubectl get pod -w
 ```
 
 ```
-kubectl exec -it test-pod-1 -n falco -- bash
+kubectl exec -it test-pod-1 -- bash
 ```
 
 Installing a suspicious networking tool like telnet
