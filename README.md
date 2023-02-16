@@ -31,6 +31,17 @@ helm install falco falcosecurity/falco --namespace falco \
 kubectl get pods -n falco -o wide -w
 ```
 
+If ```NOT using EKS```, you can just run the below helm command on any kubernetes cluster
+```
+kubectl create namespace falco
+helm repo add falcosecurity https://falcosecurity.github.io/charts
+helm install falco falcosecurity/falco \
+--set falcosidekick.enabled=true \
+--set falcosidekick.webui.enabled=true \
+--set falcosidekick.config.slack.webhookurl="https://hooks.slack.com/services/XXXX" \
+-n falco
+```
+
 Get the logs from the pod ``` falco-rq4gs ```
 ```
 kubectl logs falco-rq4gs -n falco
